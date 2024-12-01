@@ -237,7 +237,7 @@ CNode* CTree::deepCopy(const CNode* original) {
 
 
 
-void CTree::enter(string str) {
+bool CTree::enter(string str) {
 
 	removeInvalidChars(str);
 
@@ -260,7 +260,7 @@ void CTree::enter(string str) {
 
 		parseData(substring);
 	}
-	while (insertCommon(1));
+	return !insertCommon(1);
 }
 
 void CTree::removeInvalidChars(std::string& str) {
@@ -295,7 +295,7 @@ void CTree::removeInvalidChars(std::string& str) {
 }
 
 
-void CTree::parseData(string str) {
+bool CTree::parseData(string str) {
 	str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
 
 	bool b_helper = false;
@@ -309,21 +309,20 @@ void CTree::parseData(string str) {
 		}
 	}
 
+	//operator
 	if (b_helper) {
 		if (str.length() != 1)
 		{
-			cout << "Niepoprawna wartosc: " << str << ". Dany fragment nie zostanie wstawiony!" << endl;
-			return;
+			return false;
 		}
 
-		insert(str[0]);
-		return;
+		return insert(str[0]);
 	}
 
+	//sin / cos
 	if (str == TRYGONOM[0] || str == TRYGONOM[1])
 	{
-		insert(str[0]);
-		return;
+		return insert(str[0]);
 	}
 
 	b_helper = true;
@@ -338,10 +337,10 @@ void CTree::parseData(string str) {
 	if (b_helper) {
 		int val;
 		stringstream(str) >> val;
-		insert(val);
+		return insert(val);
 	}
 	else {
-		insert(str);
+		return insert(str);
 	}
 }
 
@@ -353,7 +352,6 @@ bool CTree::insert(int val) {
 	}
 	else
 	{
-		cout << "Nie udalo sie dodac wartosci: " << val << endl;
 		return false;
 	}
 
@@ -385,11 +383,10 @@ bool CTree::insert(char val) {
 		if (parsed->parent != NULL)
 		{
 			parsed = parsed->parent;
-			insert(val);
+			return insert(val);
 		}
 		else
 		{
-			cout << "Nie udalo sie dodac wartosci: " << val << endl;
 			return false;
 		}
 	}
@@ -421,7 +418,6 @@ bool CTree::insert(string val) {
 		}
 		return true;
 	}
-	cout << "Nie udalo sie dodac wartosci: " << val << endl;
 	return false;
 }
 template<typename T>
@@ -445,7 +441,7 @@ bool CTree::insertCommon(T val) {
 			if (parsed->parent != NULL)
 			{
 				parsed = parsed->parent;
-				insert(val);
+				return insert(val);
 			}
 			else
 			{
@@ -464,46 +460,52 @@ bool CTree::insertCommon(T val) {
 }
 
 
-void CTree::inOrder() {
-
-	inOrderRecursion(*root);
-	cout << endl;
+string CTree::inOrder() {
+	if (this == NULL)
+	{
+		return "";
+	}
+	string result;
+	inOrderRecursion(*root, result);
+	return result;
 }
 
-void CTree::inOrderRecursion(const CNode& node) {
-	bool is_in = false;
-	switch (node.data)
-	{
-	case ARYTHM_OPERATOR: cout << node.ch_val << " "; break;
-	case VALUE: cout << node.i_val << " "; break;
-	case VARIABLE: cout << node.s_val << " ";
-		if (std::find(s_variables.begin(), s_variables.end(), node.s_val) == s_variables.end())
-		{
+void CTree::inOrderRecursion(const CNode& node, string& result) {
+	switch (node.data) {
+	case ARYTHM_OPERATOR:
+		result += node.ch_val;
+		result += " ";
+		break;
+	case VALUE:
+		result += to_string(node.i_val);
+		result += " ";
+		break;
+	case VARIABLE:
+		result += node.s_val;
+		result += " ";
+		if (find(s_variables.begin(), s_variables.end(), node.s_val) == s_variables.end()) {
 			s_variables.push_back(node.s_val);
 		}
 		break;
 	case TRYG:
-		if (node.ch_val == 's')
-		{
-			cout << "sin ";
+		if (node.ch_val == 's') {
+			result += "sin ";
 		}
-		else
-		{
-			cout << "cos ";
+		else {
+			result += "cos ";
 		}
 		break;
 	default:
 		break;
 	}
 
-	for (size_t i = 0; i < node.i_children_amount; i++)
-	{
-		if (node.children[i].data != EMPTY)
-		{
-			inOrderRecursion(node.children[i]);
+	for (size_t i = 0; i < node.i_children_amount; i++) {
+		if (node.children[i].data != EMPTY) {
+			inOrderRecursion(node.children[i], result);
 		}
 	}
 }
+
 
 int CTree::calculate(int values[]) {
 	int len = 0;
@@ -570,7 +572,7 @@ int CTree::cntgt(int val) {
 }
 
 int CTree::cntgtRecursion(int val, int ans, CNode& node) {
-	if (node.data = VALUE)
+	if (node.data == VALUE)
 	{
 		if (node.i_val > val)
 		{
@@ -585,4 +587,77 @@ int CTree::cntgtRecursion(int val, int ans, CNode& node) {
 		}
 	}
 	return ans;
+}
+
+
+CResult<void, CError> CTree::crEnter(string str) {
+	vector<CError*> v_errors;
+
+	int i_initial_len = str.length();
+	removeInvalidChars(str);
+	//sprawdzam czy podany string jest prawidlowy
+	if (i_initial_len!=str.length()||str.length()==0)
+	{
+		v_errors.push_back(new CError("Incorrect input format!"));
+	}
+
+	parsed = root;
+
+	int i_pointer = 0;
+
+	while (i_pointer != string::npos) {
+		size_t next_space = str.find(" ", i_pointer);
+		string substring;
+
+		if (next_space != string::npos) {
+			substring = str.substr(i_pointer, next_space - i_pointer);
+			i_pointer = next_space + 1;
+		}
+		else {
+			substring = str.substr(i_pointer);
+			i_pointer = string::npos;
+		}
+		if (!parseData(substring))
+		{
+			if (isFull())
+			{
+				v_errors.push_back(new CError("Couldn't add element to tree: '" + substring + "', tree is already full!"));
+			}
+			else
+			{
+				v_errors.push_back(new CError("Couldn't add element to tree: '"+substring+"'!"));
+			}
+		}
+	}
+	//sprawdzam czy drzewo jest zapelnione
+	if (insertCommon(1))
+	{
+		v_errors.push_back(new CError("Equation incorrect | not enough values or variables!"));
+	}
+	if (v_errors.empty())
+	{
+		return CResult<void, CError>::cOk();
+	}
+	else
+	{
+		return CResult<void, CError>::cFail(v_errors);
+	}
+
+}
+
+
+bool CTree::isFull() 
+{
+	if (parsed == root)
+	{
+		while (parsed->data == ARYTHM_OPERATOR || parsed->data == TRYG) {
+			if (parsed->children[parsed->data==ARYTHM_OPERATOR ? 1 : 0].data == EMPTY)
+			{
+				return false;
+			}
+			*parsed = parsed->children[parsed->data == ARYTHM_OPERATOR ? 1 : 0];
+		}
+		parsed = root;
+	}
+	return true;
 }

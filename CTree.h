@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cmath>
 #include <vector>
+#include "CResult.h"
 
 using namespace std;
 
@@ -58,13 +59,14 @@ public:
 	void operator=(const CTree& pNewTree);
 	CTree operator+(const CTree& pNewTree);
 
-	void enter(string str);
+	bool enter(string str);
+	CResult<void, CError> crEnter(string str);
 
 	bool insert(int val);
 	bool insert(char val);
 	bool insert(string val);
 
-	void inOrder();
+	string inOrder();
 
 	int calculate(int values[]);
 
@@ -78,7 +80,7 @@ private:
 
 	CNode* deepCopy(const CNode* original);
 
-	void parseData(string str);
+	bool parseData(string str);
 	void removeInvalidChars(string& str);
 
 	CNode* findLeaf(CNode* node);
@@ -86,10 +88,12 @@ private:
 	template<typename T>
 	bool insertCommon(T val);
 
-	void inOrderRecursion(const CNode& node);
+	void inOrderRecursion(const CNode& node, string& result);
 	int calculateRecursion(const CNode& currentNode, int variables[]);
 
 	int cntgtRecursion(int val, int ans, CNode& node);
+
+	bool isFull();
 
 };
 

@@ -60,12 +60,12 @@ public:
 	}
 
 	T cGetValue() {
-		if (pc_value != NULL) {
+		if (bIsSuccess()) {
 			return *pc_value;
 		}
 		else {
 			//do przemyslenia
-			return NULL;
+			return T();
 		}
 	}
 	vector<E*>& vGetErrors() {
@@ -102,6 +102,8 @@ private:
 };
 
 
+// dla typu void 
+
 template <typename E>
 class CResult<void, E>
 {
@@ -122,7 +124,7 @@ public:
 	~CResult();
 
 	static CResult<void, E> cOk() {
-		return NULL;
+		return CResult<void, E>();
 	}
 	static CResult<void, E> cFail(E* pcError) {
 		return CResult<void, E>(pcError);
@@ -143,7 +145,7 @@ public:
 
 	bool bIsSuccess() 
 	{
-		return v_errors.size() == 0;
+		return v_errors.empty();
 	}
 
 	vector<E*>& vGetErrors() {
@@ -170,7 +172,14 @@ private:
 
 };
 
+template <typename E>
+CResult<void, E>::CResult() {
+}
 
+template <typename E>
+CResult<void, E>::~CResult() {
+	clear();
+}
 
 
 #endif // !CRESULT_CPP

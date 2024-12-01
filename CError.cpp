@@ -1,8 +1,6 @@
 #include "CError.h"
 
 
-
-
 CError::CError() 
 {
 	s_error = DEFAULT_ERROR_MESSAGE;
@@ -19,7 +17,6 @@ CError::CError(const CError& cOther)
 }
 
 CError::~CError(){}
-
 
 
 std::string CError::sGetError()

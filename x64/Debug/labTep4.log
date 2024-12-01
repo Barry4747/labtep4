@@ -1,2 +1,10 @@
-﻿  labTep4.cpp
+﻿  CTree.cpp
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(254,27): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(258,24): warning C4309: "=": obcięcie stałej wartości
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(521,23): warning C4244: "return": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(522,23): warning C4244: "return": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(596,20): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(614,27): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(618,24): warning C4309: "=": obcięcie stałej wartości
+C:\Users\barte\source\repos\labTep4\labTep4\CTree.cpp(560): warning C4715: "CTree::calculateRecursion”: niewszystkie ścieżki kodu zwracają wartość
   labTep4.vcxproj -> C:\Users\barte\source\repos\labTep4\x64\Debug\labTep4.exe

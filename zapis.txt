@@ -1,0 +1,3 @@
+Couldn't add element to tree: 'a+'!
+Couldn't add element to tree: '1', tree is already full!
+cannot divide by zero

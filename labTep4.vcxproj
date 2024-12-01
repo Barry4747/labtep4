@@ -135,6 +135,7 @@
     <ClInclude Include="CError.h" />
     <ClInclude Include="CResult.h" />
     <ClInclude Include="CTree.h" />
+    <ClInclude Include="Serializer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
